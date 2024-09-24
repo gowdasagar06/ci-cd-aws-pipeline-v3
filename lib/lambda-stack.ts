@@ -13,12 +13,8 @@ import * as s3 from 'aws-cdk-lib/aws-s3';
 export class MyLambdaStack extends cdk.Stack {
     constructor(scope: Construct, id: string, stageName: string, props?: cdk.StackProps) {
       super(scope, id, props);
-      // new Function(this, 'LambdaFunction', {
-      //   runtime: Runtime.NODEJS, //using node for this, but can easily use python or other
-      //   handler: 'handler.handler',
-      //   code: Code.fromAsset(path.join(__dirname, 'lambda')), //resolving to ./lambda directory
-      //   environment: { "stageName": stageName } //inputting stagename
-      // });
+   
+
       const codePipelineBucket = new s3.Bucket(this, 'CodePipelineBucket', {
         bucketName: `${this.stackName}-lab`,
         lifecycleRules: [{
@@ -91,7 +87,6 @@ export class MyLambdaStack extends cdk.Stack {
       new codedeploy.CfnDeploymentGroup(this, 'CodeDeployDeploymentGroup', {
         applicationName: codeDeployApplication.applicationName || `${this.stackName}-application`,
         deploymentGroupName: `${this.stackName}-deploygroup`,
-        // serviceRoleArn: "arn:aws:iam::954503069243:role/test-codedeployrole",codeDeployRole
         serviceRoleArn: codeDeployRole.roleArn,
         deploymentConfigName: 'CodeDeployDefault.AllAtOnce',
         ec2TagFilters: [
