@@ -67,6 +67,7 @@ export class MyLambdaStack extends cdk.Stack {
     managedPolicies: [
       iam.ManagedPolicy.fromAwsManagedPolicyName('service-role/AWSLambdaBasicExecutionRole'),
     ],
+    environment: { "stageName": stageName },
   });
 
   // Lambda function
@@ -82,10 +83,10 @@ export class MyLambdaStack extends cdk.Stack {
         return response;
       };
     `),
+    environment: { "stageName": stageName },
     handler: 'index.handler',
     role: lambdaRole,
   });
-  environment: { "stageName": stageName }
         
     }
     
