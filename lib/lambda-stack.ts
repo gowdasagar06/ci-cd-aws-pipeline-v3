@@ -20,7 +20,7 @@ export class MyLambdaStack extends cdk.Stack {
       //   environment: { "stageName": stageName } //inputting stagename
       // });
       const codePipelineBucket = new s3.Bucket(this, 'CodePipelineBucket', {
-        // bucketName: `${this.stackName}-lab`,
+        bucketName: `${this.stackName}-lab`,
         lifecycleRules: [{
           id: config.bucketLifecyclePolicy.id,
           enabled: config.bucketLifecyclePolicy.status === 'Enabled',
