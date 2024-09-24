@@ -91,7 +91,7 @@ export class MyLambdaStack extends cdk.Stack {
       new codedeploy.CfnDeploymentGroup(this, 'CodeDeployDeploymentGroup', {
         applicationName: codeDeployApplication.applicationName || `${this.stackName}-application`,
         deploymentGroupName: `${this.stackName}-deploygroup`,
-        serviceRoleArn: codeDeployRole,
+        serviceRoleArn: "arn:aws:iam::954503069243:role/test-codedeployrole",
         deploymentConfigName: 'CodeDeployDefault.AllAtOnce',
         ec2TagFilters: [
           {
