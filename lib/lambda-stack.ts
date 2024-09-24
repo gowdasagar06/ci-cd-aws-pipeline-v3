@@ -35,9 +35,9 @@ export class MyLambdaStack extends cdk.Stack {
       });
   
       // Create CodeDeploy Role with stack name in the role name
-       const codeDeployRole = new iam.Role(this, 'CodeDeployRole', {
-        roleName: `${this.stackName}-code-deploy-role`, // Add stack name to the role name
-        assumedBy: new iam.ServicePrincipal('codedeploy.amazonaws.com'),
+      const codeDeployRole = new iam.Role(this, 'CodeDeployRole', {
+        roleName: `${this.stackName}-code-deploy-role`,
+        assumedBy: new iam.ServicePrincipal(`codedeploy.${cdk.Stack.of(this).region}.amazonaws.com`), // Dynamic region
         inlinePolicies: {
           CodeDeployPermissions: new iam.PolicyDocument({
             statements: [
@@ -80,7 +80,7 @@ export class MyLambdaStack extends cdk.Stack {
           }),
         },
       });
-  
+      
       // Create CodeDeploy Application with stack name in the application name
       const codeDeployApplication = new codedeploy.CfnApplication(this, 'CodeDeployApplication', {
         applicationName: `${this.stackName}-application`,
@@ -91,7 +91,8 @@ export class MyLambdaStack extends cdk.Stack {
       new codedeploy.CfnDeploymentGroup(this, 'CodeDeployDeploymentGroup', {
         applicationName: codeDeployApplication.applicationName || `${this.stackName}-application`,
         deploymentGroupName: `${this.stackName}-deploygroup`,
-        serviceRoleArn: "arn:aws:iam::954503069243:role/test-codedeployrole",
+        // serviceRoleArn: "arn:aws:iam::954503069243:role/test-codedeployrole",codeDeployRole
+        serviceRoleArn: codeDeployRole.roleArn,
         deploymentConfigName: 'CodeDeployDefault.AllAtOnce',
         ec2TagFilters: [
           {
