@@ -36,8 +36,8 @@ export class MyLambdaStack extends cdk.Stack {
   
       // Create CodeDeploy Role with stack name in the role name
        const codeDeployRole = new iam.Role(this, 'CodeDeployRole', {
-        roleName: `${this.stackName}-code-deploy-role`, // Add stack name to the role name
-        assumedBy: new iam.ServicePrincipal('codedeploy.amazonaws.com'),
+        roleName: `${this.stackName}-role`, // Add stack name to the role name
+        assumedBy: new iam.ServicePrincipal('codedeploy.amazonaws.com'), // Allow CodeDeploy to assume this role
         inlinePolicies: {
           CodeDeployPermissions: new iam.PolicyDocument({
             statements: [
@@ -79,7 +79,14 @@ export class MyLambdaStack extends cdk.Stack {
             ],
           }),
         },
-      });
+    });
+    
+    // Adding explicit trust relationship for CodeDeploy
+    codeDeployRole.assumeRolePolicy?.addStatements(new iam.PolicyStatement({
+      actions: ['sts:AssumeRole'],
+      effect: iam.Effect.ALLOW,
+      principals: [new iam.ServicePrincipal('codedeploy.amazonaws.com')],
+    }));
   
       // Create CodeDeploy Application with stack name in the application name
       const codeDeployApplication = new codedeploy.CfnApplication(this, 'CodeDeployApplication', {
