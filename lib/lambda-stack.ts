@@ -59,7 +59,7 @@ export class MyLambdaStack extends cdk.Stack {
             ],
           }),
         },
-        environment: { "stageName": stageName }
+        // environment: { "stageName": stageName }
       });
         
         
