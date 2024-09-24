@@ -35,58 +35,73 @@ export class MyLambdaStack extends cdk.Stack {
       });
   
       // Create CodeDeploy Role with stack name in the role name
-       const codeDeployRole = new iam.Role(this, 'CodeDeployRole', {
-        roleName: `${this.stackName}-role`, // Add stack name to the role name
-        assumedBy: new iam.ServicePrincipal('codedeploy.amazonaws.com'), // Allow CodeDeploy to assume this role
-        inlinePolicies: {
-          CodeDeployPermissions: new iam.PolicyDocument({
-            statements: [
-              new iam.PolicyStatement({
-                actions: [
-                  "ec2:Describe*",
-                  "s3:Get*",
-                  "s3:List*",
-                  "autoscaling:CompleteLifecycleAction",
-                  "autoscaling:DeleteLifecycleHook",
-                  "autoscaling:PutInstanceInStandby",
-                  "autoscaling:PutLifecycleHook",
-                  "autoscaling:RecordLifecycleActionHeartbeat",
-                  "autoscaling:ResumeProcesses",
-                  "autoscaling:SuspendProcesses",
-                  "autoscaling:TerminateInstanceInAutoScalingGroup",
-                  "cloudwatch:DescribeAlarms",
-                  "cloudwatch:PutMetricAlarm",
-                  "cloudwatch:DeleteAlarms",
-                  "cloudwatch:GetMetricStatistics",
-                  "cloudformation:DescribeStacks",
-                  "cloudformation:ListStackResources",
-                  "cloudformation:DescribeStackResources",
-                  "sns:Publish",
-                  "sns:ListTopics",
-                  "sns:GetTopicAttributes",
-                  "lambda:ListFunctions",
-                  "lambda:GetFunctionConfiguration",
-                  "ecs:DescribeServices",
-                  "ecs:DescribeTaskDefinition",
-                  "ecs:DescribeTasks",
-                  "ecs:ListTasks",
-                  "ecs:RegisterTaskDefinition",
-                  "ecs:UpdateService",
-                  "iam:PassRole"
-                ],
-                resources: ["*"],
-              }),
-            ],
-          }),
-        },
-    });
+    //    const codeDeployRole = new iam.Role(this, 'CodeDeployRole', {
+    //     roleName: `${this.stackName}-role`, // Add stack name to the role name
+    //     assumedBy: new iam.ServicePrincipal('codedeploy.amazonaws.com'), // Allow CodeDeploy to assume this role
+    //     inlinePolicies: {
+    //       CodeDeployPermissions: new iam.PolicyDocument({
+    //         statements: [
+    //           new iam.PolicyStatement({
+    //             actions: [
+    //               "ec2:Describe*",
+    //               "s3:Get*",
+    //               "s3:List*",
+    //               "autoscaling:CompleteLifecycleAction",
+    //               "autoscaling:DeleteLifecycleHook",
+    //               "autoscaling:PutInstanceInStandby",
+    //               "autoscaling:PutLifecycleHook",
+    //               "autoscaling:RecordLifecycleActionHeartbeat",
+    //               "autoscaling:ResumeProcesses",
+    //               "autoscaling:SuspendProcesses",
+    //               "autoscaling:TerminateInstanceInAutoScalingGroup",
+    //               "cloudwatch:DescribeAlarms",
+    //               "cloudwatch:PutMetricAlarm",
+    //               "cloudwatch:DeleteAlarms",
+    //               "cloudwatch:GetMetricStatistics",
+    //               "cloudformation:DescribeStacks",
+    //               "cloudformation:ListStackResources",
+    //               "cloudformation:DescribeStackResources",
+    //               "sns:Publish",
+    //               "sns:ListTopics",
+    //               "sns:GetTopicAttributes",
+    //               "lambda:ListFunctions",
+    //               "lambda:GetFunctionConfiguration",
+    //               "ecs:DescribeServices",
+    //               "ecs:DescribeTaskDefinition",
+    //               "ecs:DescribeTasks",
+    //               "ecs:ListTasks",
+    //               "ecs:RegisterTaskDefinition",
+    //               "ecs:UpdateService",
+    //               "iam:PassRole"
+    //             ],
+    //             resources: ["*"],
+    //           }),
+    //         ],
+    //       }),
+    //     },
+    // });
     
-    // Adding explicit trust relationship for CodeDeploy
-    codeDeployRole.assumeRolePolicy?.addStatements(new iam.PolicyStatement({
-      actions: ['sts:AssumeRole'],
+    // // Adding explicit trust relationship for CodeDeploy
+    // codeDeployRole.assumeRolePolicy?.addStatements(new iam.PolicyStatement({
+    //   actions: ['sts:AssumeRole'],
+    //   effect: iam.Effect.ALLOW,
+    //   principals: [new iam.ServicePrincipal('codedeploy.amazonaws.com')],
+    // }));
+
+      const codeDeployRole = new iam.Role(this, 'CodeDeployRole', {
+      roleName: `${this.stackName}-role`,
+      assumedBy: new iam.ServicePrincipal('codedeploy.amazonaws.com'),
+  });
+  
+  // Custom admin policy
+  const adminPolicy = new iam.PolicyStatement({
       effect: iam.Effect.ALLOW,
-      principals: [new iam.ServicePrincipal('codedeploy.amazonaws.com')],
-    }));
+      actions: ['*'], // Allow all actions
+      resources: ['*'], // On all resources
+  });
+  
+  // Attach the policy to the role
+  codeDeployRole.addToPolicy(adminPolicy);
   
       // Create CodeDeploy Application with stack name in the application name
       const codeDeployApplication = new codedeploy.CfnApplication(this, 'CodeDeployApplication', {
