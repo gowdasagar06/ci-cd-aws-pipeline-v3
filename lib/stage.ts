@@ -7,6 +7,6 @@ export class MyPipelineAppStage extends cdk.Stage {
     constructor(scope: Construct, stageName: string, props?: cdk.StageProps) {
       super(scope, stageName, props);
   
-      const lambdaStack = new MyLambdaStack(this, 'cross-account-deployment-665577', stageName);      
+      const lambdaStack = new MyLambdaStack(this, 'cross-teest-680', stageName);      
     }
 }
